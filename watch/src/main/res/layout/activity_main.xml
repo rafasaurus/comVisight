@@ -8,20 +8,22 @@
 
     <Button
         android:id="@+id/listen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="63dp"
+        android:layout_height="31dp"
         android:layout_margin="15dp"
-        android:text="LISTEN"/>
+        android:layout_marginStart="12dp"
+        android:text="LISTEN"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/listDevices"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/listen"
+        android:layout_width="75dp"
+        android:layout_height="34dp"
         android:layout_margin="15dp"
-        android:text="LIST DEVICES"/>
+        android:text="LIST DEVICES"
+        app:layout_constraintStart_toEndOf="@id/listen"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/status"
@@ -36,7 +38,7 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="30dp"
         app:layout_constraintTop_toBottomOf="@id/listen"
         android:layout_marginTop="15dp"
         android:background="@android:color/holo_blue_light" />

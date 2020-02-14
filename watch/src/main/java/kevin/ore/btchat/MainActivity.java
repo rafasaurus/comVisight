@@ -17,15 +17,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button listen,send, listDevices;
+    Button listen, send, listDevices;
     ListView listView;
     TextView msg_box, status;
     EditText writeMsg;
@@ -248,8 +252,39 @@ public class MainActivity extends AppCompatActivity {
 
             while (true){
                 try {
-                    bytes = inputStream.read(buffer);
-                    handler.obtainMessage(STATE_MESSAGE_RECEIVED,bytes,-1,buffer).sendToTarget();
+                    InputStream is = new FileInputStream("/sys/class/misc/fastacc_mpu/device/fifo");
+                    byte[] buffer_ = new byte[6];
+                    int buffer__length;
+                    int accelX = 0;
+                    int accelY = 0;
+                    int accelZ = 0;
+                    // bytes = inputStream.read(buffer_);
+                    // handler.obtainMessage(STATE_MESSAGE_RECEIVED,bytes,-1,buffer_).sendToTarget();
+                    buffer__length = is.read(buffer_);
+                    if (buffer__length == 6)
+                    {
+                        accelX = (0xFF & (int)buffer_[1]) | ((0xFF & (int)(buffer_[0])) << 8);
+                        accelY = (0xFF & (int)buffer_[3]) | ((0xFF & (int)(buffer_[2])) << 8);
+                        accelZ = (0xFF & (int)buffer_[5]) | ((0xFF & (int)(buffer_[4])) << 8);
+
+                        ByteBuffer byte_buffer_ = ByteBuffer.wrap(buffer_);
+                        byte_buffer_.order(ByteOrder.BIG_ENDIAN);
+
+                        // Log.d("r", String.format("accelX=%d, accelY=%d, accelZ=%d, accelX=%d, accelY=%d, accelZ=%d",
+                        //             byte_buffer_.getShort(0),
+                        //             byte_buffer_.getShort(2),
+                        //             byte_buffer_.getShort(4),
+                        //             accelX,
+                        //             accelY,
+                        //             accelZ)
+                        //      );
+                        outputStream.write(buffer_);
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(1);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
