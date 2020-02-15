@@ -23,13 +23,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button listen, send, listDevices;
+    // Button listen, send,
+    Button listDevices;
     ListView listView;
     TextView msg_box, status;
     EditText writeMsg;
@@ -82,6 +84,13 @@ public class MainActivity extends AppCompatActivity {
                     for(BluetoothDevice device : bt){
                         btArray[index] = device;
                         strings[index] = device.getName();
+                        if (Objects.equals(new String("overkill"), device.getName())) {
+                            ClientClass clientClass = new ClientClass(btArray[index]);
+                            clientClass.start();
+
+                            status.setText("debug");
+                            return;
+                        }
                         index++;
                     }
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,strings);
@@ -90,13 +99,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ServerClass serverClass = new ServerClass();
-                serverClass.start();
-            }
-        });
+        // listen.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View v) {
+        //         ServerClass serverClass = new ServerClass();
+        //         serverClass.start();
+        //     }
+        // });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -108,13 +117,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String string = String.valueOf(writeMsg.getText());
-                sendRecieve.write(string.getBytes());
-            }
-        });
+        // send.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View v) {
+        //         String string = String.valueOf(writeMsg.getText());
+        //         sendRecieve.write(string.getBytes());
+        //     }
+        // });
     }
     Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -142,12 +151,12 @@ public class MainActivity extends AppCompatActivity {
         }
     });
     private void findViewByIdes() {
-        listen = (Button) findViewById(R.id.listen);
-        send = (Button) findViewById(R.id.send);
+        // listen = (Button) findViewById(R.id.listen);
+        // send = (Button) findViewById(R.id.send);
         listView = (ListView) findViewById(R.id.listView);
-        msg_box = (TextView) findViewById(R.id.msg);
+        // msg_box = (TextView) findViewById(R.id.msg);
         status = (TextView) findViewById(R.id.status);
-        writeMsg = (EditText) findViewById(R.id.writemsg);
+        // writeMsg = (EditText) findViewById(R.id.writemsg);
         listDevices = (Button) findViewById(R.id.listDevices);
 
     }
