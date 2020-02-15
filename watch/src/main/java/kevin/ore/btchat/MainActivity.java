@@ -1,4 +1,4 @@
-package visight.comVisight.phone;
+package visight.comVisight.watch;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

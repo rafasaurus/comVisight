@@ -1,4 +1,4 @@
-package visight.comVisight.phone;
+package visight.comVisight.watch;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("visight.comVisight.phone", appContext.getPackageName());
+        assertEquals("visight.comVisight.watch", appContext.getPackageName());
     }
 }

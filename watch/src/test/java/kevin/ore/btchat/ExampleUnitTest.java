@@ -1,4 +1,4 @@
-package visight.comVisight.phone;
+package visight.comVisight.watch;
 
 import org.junit.Test;
 
