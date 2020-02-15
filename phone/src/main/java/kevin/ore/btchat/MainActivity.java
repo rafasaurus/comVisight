@@ -1,4 +1,4 @@
-package kevin.ore.btchat;
+package visight.comVisight.phone;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -105,48 +105,47 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String string = String.valueOf(writeMsg.getText());
-                sendRecieve.write(string.getBytes());
-            }
-        });
+        // send.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View v) {
+        //         String string = String.valueOf(writeMsg.getText());
+        //         sendRecieve.write(string.getBytes());
+        //     }
+        // });
     }
-    Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what){
-                case STATE_LISTENING:
-                    status.setText("Listening");
-                    break;
-                case STATE_CONNECTING:
-                    status.setText("Connecting");
-                    break;
-                case STATE_CONNECTED:
-                    status.setText("Connected");
-                    break;
-                case STATE_CONNECTION_FAILED:
-                    status.setText("Connection Failed");
-                    break;
-                case STATE_MESSAGE_RECEIVED:
-                    byte[] readBuff = (byte[]) msg.obj;
-                    String tempMsg = new String(readBuff,0,msg.arg1);
-                    msg_box.setText(tempMsg);
-                    break;
-            }
-            return true;
-        }
-    });
+    // Handler handler = new Handler(new Handler.Callback() {
+    //     @Override
+    //     public boolean handleMessage(Message msg) {
+    //         switch (msg.what){
+    //             case STATE_LISTENING:
+    //                 status.setText("Listening");
+    //                 break;
+    //             case STATE_CONNECTING:
+    //                 status.setText("Connecting");
+    //                 break;
+    //             case STATE_CONNECTED:
+    //                 status.setText("Connected");
+    //                 break;
+    //             case STATE_CONNECTION_FAILED:
+    //                 status.setText("Connection Failed");
+    //                 break;
+    //             case STATE_MESSAGE_RECEIVED:
+    //                 byte[] readBuff = (byte[]) msg.obj;
+    //                 String tempMsg = new String(readBuff,0,msg.arg1);
+    //                 msg_box.setText(tempMsg);
+    //                 break;
+    //         }
+    //         return true;
+    //     }
+    // });
     private void findViewByIdes() {
         listen = (Button) findViewById(R.id.listen);
-        send = (Button) findViewById(R.id.send);
+        // send = (Button) findViewById(R.id.send);
         listView = (ListView) findViewById(R.id.listView);
         msg_box = (TextView) findViewById(R.id.msg);
         status = (TextView) findViewById(R.id.status);
         writeMsg = (EditText) findViewById(R.id.writemsg);
         listDevices = (Button) findViewById(R.id.listDevices);
-
     }
     private class ServerClass extends Thread{
         private BluetoothServerSocket serverSocket;
@@ -165,20 +164,20 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Message message = Message.obtain();
                     message.what = STATE_CONNECTING;
-                    handler.sendMessage(message);
+                    // handler.sendMessage(message);
 
                     socket=serverSocket.accept();
                 }catch (IOException e){
                     e.printStackTrace();
                     Message message = Message.obtain();
                     message.what = STATE_CONNECTION_FAILED;
-                    handler.sendMessage(message);
+                    // handler.sendMessage(message);
                 }
 
                 if(socket!=null){
                     Message message = Message.obtain();
                     message.what = STATE_CONNECTED;
-                    handler.sendMessage(message);
+                    // handler.sendMessage(message);
 
                     //Code for send / receive
                     sendRecieve = new SendRecieve(socket);
@@ -204,12 +203,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void run(){
-
             try {
                 socket.connect();
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTED;
-                handler.sendMessage(message);
+                // handler.sendMessage(message);
 
                 sendRecieve = new SendRecieve(socket);
                 sendRecieve.start();
@@ -218,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTION_FAILED;
-                handler.sendMessage(message);
+                // handler.sendMessage(message);
             }
         }
     }
@@ -250,8 +248,22 @@ public class MainActivity extends AppCompatActivity {
             while (true){
                 try {
                     bytes = inputStream.read(buffer);
-                    handler.obtainMessage(STATE_MESSAGE_RECEIVED,bytes,-1,buffer).sendToTarget();
-                    Log.d("debug", buffer.toString());
+                    int int_buffer = buffer[0];
+                    int int_buffer1 = buffer[1];
+                    int int_buffer2 = buffer[2];
+                    int int_buffer3 = buffer[3];
+                    int int_buffer4 = buffer[4];
+                    int int_buffer5 = buffer[5];
+                    // handler.obtainMessage(STATE_MESSAGE_RECEIVED,bytes,-1,buffer).sendToTarget();
+                    // byte[] readBuff = (byte[]) msg.obj;
+                    String tempMsg = new String(buffer,0,5);
+                    // msg_box.setText(tempMsg);
+                    Log.d("debug", Integer.toString(int_buffer));
+                    Log.d("debug", Integer.toString(int_buffer1));
+                    Log.d("debug", Integer.toString(int_buffer2));
+                    Log.d("debug", Integer.toString(int_buffer3));
+                    Log.d("debug", Integer.toString(int_buffer4));
+                    Log.d("debug", Integer.toString(int_buffer5));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

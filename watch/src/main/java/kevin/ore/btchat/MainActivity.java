@@ -1,4 +1,4 @@
-package kevin.ore.btchat;
+package visight.comVisight.phone;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         public void run(){
             byte[] buffer = new byte[1024];
             int bytes;
-
+            int count = 0;
             while (true){
                 try {
                     InputStream is = new FileInputStream("/sys/class/misc/fastacc_mpu/device/fifo");
@@ -287,7 +287,21 @@ public class MainActivity extends AppCompatActivity {
                         //             accelY,
                         //             accelZ)
                         //      );
-                        outputStream.write(buffer_);
+                        byte[] debug_buffer_ = new byte[6];
+                        byte count_byte = (byte) count;
+                        debug_buffer_[0] = count_byte;
+                        count = count + 1;
+                        debug_buffer_[1] = count_byte;
+                        count = count + 1;
+                        debug_buffer_[2] = count_byte;
+                        count = count + 1;
+                        debug_buffer_[3] = count_byte;
+                        count = count + 1;
+                        debug_buffer_[4] = count_byte;
+                        count = count + 1;
+                        debug_buffer_[5] = count_byte;
+                        count = count + 1;
+                        outputStream.write(debug_buffer_);
                         try {
                             TimeUnit.MILLISECONDS.sleep(1);
                         } catch (InterruptedException e) {
