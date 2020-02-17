@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -252,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
             int bufferLength;
             ByteBuffer byte_buffer = ByteBuffer.allocateDirect(6);;
 
-            ReadableByteChannel channel = Channels.newChannel(inputStream);
+            // ReadableByteChannel channel = Channels.newChannel(inputStream);
             long startTime = 0;
             int time = 0;
             while (true){
@@ -262,23 +263,29 @@ public class MainActivity extends AppCompatActivity {
                     // byte_buffer = ByteBuffer.wrap(buffer);
                     // byte_buffer.order(ByteOrder.BIG_ENDIAN);
 
-                    channel.read(byte_buffer);
+                    // channel.read(byte_buffer);
                     // in order to read the new bytes, the buffer has to be rewinded
-                    byte_buffer.rewind();
+                    // byte_buffer.rewind();
 
-                    time = (int)((System.nanoTime() - startTime) / 1000);
-                    Log.d("debug", String.format("%d, %d, %d, %d",
+                    // uncomment for bufferedInput
+                    BufferedInputStream bufferedInputStream=new BufferedInputStream(inputStream);
+                    bufferLength = bufferedInputStream.read(buffer);
+                    byte_buffer = ByteBuffer.wrap(buffer);
+
+                    time = (int)((System.nanoTime() - startTime) / 1e3);
+                    Log.d("debug", String.format("%d, %d, %d, %d, %d",
                             byte_buffer.getShort(0),
                             byte_buffer.getShort(2),
                             byte_buffer.getShort(4),
-                            time
+                            time,
+                            bufferedInputStream.available()
                     ));
 
-                    try {
-                        TimeUnit.MICROSECONDS.sleep(10);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    // try {
+                    //     TimeUnit.MICROSECONDS.sleep(250);
+                    // } catch (InterruptedException e) {
+                    //     throw new RuntimeException(e);
+                    // }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -18,6 +19,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -261,22 +264,36 @@ public class MainActivity extends AppCompatActivity {
             byte[] buffer = new byte[6];
             int buffer_length = 0;
             FileInputStream fileStream = null;
+            BufferedInputStream  bufferedInputStream = null;
             try {
-                fileStream = new FileInputStream("/sys/class/misc/fastacc_mpu/device/fifo");
+                // fileStream = new FileInputStream("/sys/class/misc/fastacc_mpu/device/fifo");
+                bufferedInputStream = new BufferedInputStream(new FileInputStream("/sys/class/misc/fastacc_mpu/device/fifo"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            BufferedOutputStream bufferedOutputStream=new BufferedOutputStream(outputStream);
+            long startTime = 0;
+            int time = 0;
             while (true){
+                startTime = System.nanoTime();
                 try {
-                    buffer_length = fileStream.read(buffer);
+                    buffer_length = bufferedInputStream.read(buffer);
                     if (buffer_length == 6)
                     {
                         outputStream.write(buffer);
-                        try {
-                            TimeUnit.MICROSECONDS.sleep(1);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        // outputStream.flush();
+                        // bufferedOutputStream.flush();
+                        // bufferedOutputStream.write(buffer);
+                        // bufferedOutputStream.flush();
+                        // try {
+                        //     TimeUnit.MICROSECONDS.sleep(10);
+                        // } catch (InterruptedException e) {
+                        //     throw new RuntimeException(e);
+                        // }
+                        time = (int)((System.nanoTime() - startTime) / 1e3);
+                        Log.d("debug", String.format("%d",
+                                time
+                        ));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
