@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             intent2.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,120);
             startActivity(intent2);
         }
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         implementListeners();
     }
 
@@ -272,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                     {
                         outputStream.write(buffer);
                         try {
-                            TimeUnit.MICROSECONDS.sleep(1;
+                            TimeUnit.MICROSECONDS.sleep(1);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }

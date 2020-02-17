@@ -23,8 +23,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -246,35 +250,35 @@ public class MainActivity extends AppCompatActivity {
         public void run(){
             byte[] buffer = new byte[6];
             int bufferLength;
+            ByteBuffer byte_buffer = ByteBuffer.allocateDirect(6);;
 
-            // int accelX = 0;
-            // int accelY = 0;
-            // int accelZ = 0;
+            ReadableByteChannel channel = Channels.newChannel(inputStream);
+            long startTime = 0;
+            int time = 0;
             while (true){
+                startTime = System.nanoTime();
                 try {
-                    bufferLength = inputStream.read(buffer);
-                    ByteBuffer byte_buffer_ = ByteBuffer.wrap(buffer);
-                    byte_buffer_.order(ByteOrder.BIG_ENDIAN);
+                    // bufferLength = inputStream.read(buffer);
+                    // byte_buffer = ByteBuffer.wrap(buffer);
+                    // byte_buffer.order(ByteOrder.BIG_ENDIAN);
 
-                    // accelX = (0xFF & (int)buffer[1]) | ((0xFF & (int)(buffer[0])) << 8);
-                    // accelY = (0xFF & (int)buffer[3]) | ((0xFF & (int)(buffer[2])) << 8);
-                    // accelZ = (0xFF & (int)buffer[5]) | ((0xFF & (int)(buffer[4])) << 8);
-                    // Log.d("r", String.format("accelX=%d, accelY=%d, accelZ=%d, accelX=%d, accelY=%d, accelZ=%d",
-                    if (bufferLength > 0)
-                        Log.d("debug", String.format("%d, %d, %d",
-                                byte_buffer_.getShort(0),
-                                byte_buffer_.getShort(2),
-                                byte_buffer_.getShort(4)
-                                //              accelX,
-                                //              accelY,
-                                //              accelZ
-                        ));
-                    else
-                        Log.d("debug", String.format("accelX=%d, accelY=%d, accelZ=%d",
-                                0,
-                                0,
-                                0
-                        ));
+                    channel.read(byte_buffer);
+                    // in order to read the new bytes, the buffer has to be rewinded
+                    byte_buffer.rewind();
+
+                    time = (int)((System.nanoTime() - startTime) / 1000);
+                    Log.d("debug", String.format("%d, %d, %d, %d",
+                            byte_buffer.getShort(0),
+                            byte_buffer.getShort(2),
+                            byte_buffer.getShort(4),
+                            time
+                    ));
+
+                    try {
+                        TimeUnit.MICROSECONDS.sleep(10);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
