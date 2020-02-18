@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             intent2.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,120);
             startActivity(intent2);
         }
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         implementListeners();
     }
 
@@ -256,8 +258,9 @@ public class MainActivity extends AppCompatActivity {
             // ReadableByteChannel channel = Channels.newChannel(inputStream);
             long startTime = 0;
             int time = 0;
+            BufferedInputStream bufferedInputStream;
+            bufferedInputStream=new BufferedInputStream(inputStream);
             while (true){
-                startTime = System.nanoTime();
                 try {
                     // bufferLength = inputStream.read(buffer);
                     // byte_buffer = ByteBuffer.wrap(buffer);
@@ -268,19 +271,20 @@ public class MainActivity extends AppCompatActivity {
                     // byte_buffer.rewind();
 
                     // uncomment for bufferedInput
-                    BufferedInputStream bufferedInputStream=new BufferedInputStream(inputStream);
-                    bufferLength = bufferedInputStream.read(buffer);
-                    byte_buffer = ByteBuffer.wrap(buffer);
+                    while(bufferedInputStream.available() > 0) {
+                        startTime = System.nanoTime();
+                        bufferLength = bufferedInputStream.read(buffer);
+                        byte_buffer = ByteBuffer.wrap(buffer);
 
-                    time = (int)((System.nanoTime() - startTime) / 1e3);
-                    Log.d("debug", String.format("%d, %d, %d, %d, %d",
-                            byte_buffer.getShort(0),
-                            byte_buffer.getShort(2),
-                            byte_buffer.getShort(4),
-                            time,
-                            bufferedInputStream.available()
-                    ));
-
+                        time = (int) ((System.nanoTime() - startTime) / 1e3);
+                        Log.d("debug", String.format("%d, %d, %d, %d, %d",
+                                byte_buffer.getShort(0),
+                                byte_buffer.getShort(2),
+                                byte_buffer.getShort(4),
+                                time,
+                                bufferedInputStream.available()
+                        ));
+                    }
                     // try {
                     //     TimeUnit.MICROSECONDS.sleep(250);
                     // } catch (InterruptedException e) {
