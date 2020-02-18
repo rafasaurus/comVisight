@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -261,40 +262,41 @@ public class MainActivity extends AppCompatActivity {
             outputStream = tempOut;
         }
         public void run(){
-            byte[] buffer = new byte[6];
             int buffer_length = 0;
             FileInputStream fileStream = null;
             BufferedInputStream  bufferedInputStream = null;
+
             try {
                 // fileStream = new FileInputStream("/sys/class/misc/fastacc_mpu/device/fifo");
                 bufferedInputStream = new BufferedInputStream(new FileInputStream("/sys/class/misc/fastacc_mpu/device/fifo"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            BufferedOutputStream bufferedOutputStream=new BufferedOutputStream(outputStream);
+
             long startTime = 0;
             int time = 0;
+
             while (true){
                 startTime = System.nanoTime();
                 try {
+                    int buffer_size = 600;
+                    byte[] buffer = new byte[buffer_size];
                     buffer_length = bufferedInputStream.read(buffer);
-                    if (buffer_length == 6)
-                    {
-                        outputStream.write(buffer);
-                        // outputStream.flush();
-                        // bufferedOutputStream.flush();
-                        // bufferedOutputStream.write(buffer);
-                        // bufferedOutputStream.flush();
-                        // try {
-                        //     TimeUnit.MICROSECONDS.sleep(10);
-                        // } catch (InterruptedException e) {
-                        //     throw new RuntimeException(e);
-                        // }
-                        time = (int)((System.nanoTime() - startTime) / 1e3);
-                        Log.d("debug", String.format("%d",
-                                time
-                        ));
+                    for (int i = 0; i < buffer_size / 6; i++) {
+                        outputStream.write(Arrays.copyOfRange(buffer, i*6,i*6+6));
+                        outputStream.flush();
                     }
+                    time = (int)((System.nanoTime() - startTime) / 1e3);
+                    Log.d("debug", String.format("%d, %d, %d",
+                            time/buffer_size,
+                            time,
+                            buffer_size
+                    ));
+                    // try {
+                    //     TimeUnit.MICROSECONDS.sleep(1000);
+                    // } catch (InterruptedException e) {
+                    //     throw new RuntimeException(e);
+                    // }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
